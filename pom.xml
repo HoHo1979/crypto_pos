@@ -23,6 +23,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <vaadin.version>8.4.1</vaadin.version>
+        <vaadin.plugin.version>8.4.1</vaadin.plugin.version>
+        <vaadin.widgetset.mode>local</vaadin.widgetset.mode>
     </properties>
 
     <dependencies>
@@ -42,6 +44,25 @@
             <artifactId>viritin</artifactId>
             <version>2.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-board</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-board-precompiled</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!--Need to have this plugin to have the addon work-->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-maven-plugin</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+
 
         <!--<dependency>-->
             <!--<groupId>com.vaadin</groupId>-->
@@ -67,6 +88,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+
+            <!--Need to have this plugin to have the addon work-->
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>update-theme</goal>
+                            <goal>update-widgetset</goal>
+                            <goal>compile</goal>
+                            <!-- Comment out compile-theme goal to use on-the-fly theme compilation -->
+                            <goal>compile-theme</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

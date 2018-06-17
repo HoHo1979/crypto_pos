@@ -3,12 +3,17 @@ package com.iotarch.cryptopos;
 import com.iotarch.cryptopos.entity.Category;
 import com.iotarch.cryptopos.entity.Item;
 import com.vaadin.annotations.Push;
+import com.vaadin.annotations.Viewport;
+import com.vaadin.board.Board;
+import com.vaadin.board.Row;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.label.Header;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 
@@ -19,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @SpringUI
+@Viewport("width=device-width")
 public class MyUI extends UI {
 
     MockData mockData = new MockData();
@@ -35,6 +41,9 @@ public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+
+
+        Board mainBoard = new Board();
 
         HorizontalLayout hlayout = new HorizontalLayout();
 
@@ -65,29 +74,69 @@ public class MyUI extends UI {
 
         vlayout.addComponent(hlayout);
 
-        setContent(vlayout);
+        hlayout.setMargin(true);
+
+        MButton cashButton = new MButton("Cash")
+                                .withIcon(VaadinIcons.CASH);
+
+        MButton creditButton = new MButton("Credit Card")
+                                .withIcon(VaadinIcons.CREDIT_CARD);
+
+        MButton XRPButton = new MButton("XRP")
+                                .withIcon(VaadinIcons.ROCKET);
+
+        MButton LTCButton = new MButton("LTC")
+                                .withIcon(VaadinIcons.FIRE);
+
+        MHorizontalLayout paymentLayout = new MHorizontalLayout()
+                .withCaption("Payment Method")
+                .withComponents(cashButton,creditButton,XRPButton,LTCButton);
+
+
+        Row row = mainBoard.addRow(
+                hlayout
+        );
+
+        Row paymentRow=mainBoard.addRow(paymentLayout);
+
+        setContent(mainBoard);
 
 
     }
 
     private void itemSelected(Button.ClickEvent clickEvent) {
 
+        Item item = new Item();
 
         String number = numberField.getValue();
 
-        if(Double.valueOf(number)>0){
-            matchedItem.setItemQuantity(Double.valueOf(number));
+        if(Double.valueOf(number)>0 && matchedItem!=null){
+
+            item=copyItem(matchedItem,item);
+
+            item.setItemQuantity(Double.valueOf(number));
+
+        }else{
+            Notification.show("Please Enter Positive number");
         }
 
         if(matchedItem!=null){
 
-            gridItemList.add(matchedItem);
+            gridItemList.add(item);
 
             itemListDataProvider.refreshAll();
 
         }
 
 
+    }
+
+    private Item copyItem(Item matchedItem, Item item) {
+
+            item.setItemName(matchedItem.getItemName());
+            item.setItemPrice(matchedItem.getItemPrice());
+
+        return item;
     }
 
     private Grid<Item> createGrid() {
